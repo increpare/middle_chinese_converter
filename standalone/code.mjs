@@ -1,5 +1,13 @@
-//include fs
-var fs = require('fs');
+//import fs module
+import fs from 'fs';
+//find location of this file
+import path from 'path';
+
+import { 資料 } from "qieyun";
+import { baxter } from "qieyun-examples";
+
+//set working direction to the location of this file
+process.chdir(path.dirname(process.argv[1]));
 
 var messages=[];
 
@@ -20,6 +28,7 @@ for (var i = 0; i < preferred_keys_lines.length; i++) {
 
 var values=[];
 
+var ad_hoc_chars = [];
 var easyvalues_lines = fs.readFileSync('ad_hoc_doc.tsv').toString().split("\n");
 for (var i = 0; i < easyvalues_lines.length; i++) {
     var line = easyvalues_lines[i];
@@ -28,6 +37,7 @@ for (var i = 0; i < easyvalues_lines.length; i++) {
     var mc = split[1];
     var rest = split[2];
     var oc = split[4];
+    ad_hoc_chars.push([char,mc,rest]);
     values.push([char,"",mc,"",oc,rest]);
 }
 
@@ -230,6 +240,31 @@ function TRANSLATE(input){
   return result;
 }
 
+var entries_to_add = [];
+function fetch_entry_dynamically(character){
+  //look it up in qieyun
+  var lookup = 資料.query字頭(character);
+  if (lookup.length===0){
+    return "#"
+  } else {
+    for (var i=0;i<lookup.length;i++){
+      const 音韻地位 = lookup[i].音韻地位;
+      const 解釋 = lookup[i].解釋;
+      const mc = baxter(音韻地位);
+      //add to dict
+      if (!(character in dict)){
+        dict[character] = {};        
+      }
+      if (!(mc in dict[character])){
+        dict[character][mc] = [解釋,""];
+      }
+      entries_to_add.push([character,mc,解釋]);
+    }
+    return baxter(lookup[0].音韻地位);
+  }
+}
+
+
 var transliterate_char = function(c, mc, old_chinese,forcetone){
   var result="";
   if (dict.hasOwnProperty(c)){
@@ -302,7 +337,10 @@ function TRANSLITERATE(input,old_chinese) {
         i=end;
     } else {
       if (dict[s]==null){
-        throw "no dictionary entry for " + s;
+        fetch_entry_dynamically(s);
+        if (dict[s]==null){
+          throw "no dictionary entry for " + s;
+        }
       }
       var mc_keys = Object.keys(dict[s]);
       
@@ -339,20 +377,45 @@ function TRANSLITERATE(input,old_chinese) {
   return result;
 }
 
+import clipboardy from 'clipboardy';
 
-console.log("GOT HERE")
-var chinese_string = "樂樂樂";
-console.log(chinese_string);
-var result = TRANSLITERATE(chinese_string,false);
-console.log(result);
+//read all input from stdin synchronously
+var chinese_string = "";
+var stdin = process.openStdin();
+stdin.setEncoding('utf8');
+stdin.on('data', function(chunk) {
+  chinese_string += chunk;
+});
+stdin.on('end', function() {
+  chinese_string = chinese_string.trim();
+
+var transliterated = TRANSLITERATE(chinese_string,false);
 //generate translations
-var translation = TRANSLATE(chinese_string);
-console.log(translation);
+var translated = TRANSLATE(chinese_string);
 
-const { QMainWindow } = require("@nodegui/nodegui");
 
-const win = new QMainWindow();
+//output command-line arguments
+//copy processa.argv to clipboard
 
-win.show();
+var output = transliterated+"\n"+translated;
+clipboardy.writeSync(output);
+console.log(output);
 
-global.win = win; // To prevent win from being garbage collected.
+
+if (entries_to_add.length>0){
+  console.log("adding entries to ad_hoc_doc for characters " + entries_to_add.map(a=>a[0]).join("")+".");
+  //append entries to ad_hoc_doc.tsv
+  var toappend = "";
+  for (var i=0;i<entries_to_add.length;i++){
+    var entry = entries_to_add[i];
+    toappend += "\n"+entry[0]+"\t"+entry[1]+"\t"+entry[2];
+  }
+  //append toappend to ad_hoc_doc.tsv
+  var dat = fs.readFileSync("ad_hoc_doc.tsv","utf8");
+  dat+=toappend;
+  fs.writeFileSync("ad_hoc_doc.tsv",dat);
+
+}
+
+});
+

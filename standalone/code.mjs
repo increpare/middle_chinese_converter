@@ -6,6 +6,7 @@ import path from 'path';
 import { 資料 } from "qieyun";
 import { baxter } from "qieyun-examples";
 
+
 //set working direction to the location of this file
 process.chdir(path.dirname(process.argv[1]));
 
@@ -212,10 +213,10 @@ function TRANSLATE(input){
           for (var j=0;j<keys.length;j++){
             mc = keys[j];
             if (j>0){
-              result+="<br>\n";
+              result+="<br>";
             }
             var entry = j+" : "+dict[c][mc][0];
-            result += entry;
+            result += entry.trim();
           }
         } else {
           var mc = keys[0];
@@ -304,6 +305,7 @@ var capitalise = function(str){
   return chars.join("");
 }
 
+var not_found="";
 //mix of baxter-sagart and Karlgren–Li  notation, basewd on B-S
 function TRANSLITERATE(input,old_chinese) {
   
@@ -337,9 +339,11 @@ function TRANSLITERATE(input,old_chinese) {
         i=end;
     } else {
       if (dict[s]==null){
-        fetch_entry_dynamically(s);
+        var lookup = fetch_entry_dynamically(s);
+        // console.log("lookup "+s+" "+lookup);
         if (dict[s]==null){
-          throw "no dictionary entry for " + s;
+          not_found+=s;
+          continue;
         }
       }
       var mc_keys = Object.keys(dict[s]);
@@ -379,28 +383,29 @@ function TRANSLITERATE(input,old_chinese) {
 
 import clipboardy from 'clipboardy';
 
-//read all input from stdin synchronously
-var chinese_string = "";
-var stdin = process.openStdin();
-stdin.setEncoding('utf8');
-stdin.on('data', function(chunk) {
-  chinese_string += chunk;
-});
-stdin.on('end', function() {
-  chinese_string = chinese_string.trim();
+var output="";
 
-var transliterated = TRANSLITERATE(chinese_string,false);
-//generate translations
-var translated = TRANSLATE(chinese_string);
+var chinese_string = fs.readFileSync("input.txt","utf8");
 
+chinese_string = chinese_string.trim();
 
-//output command-line arguments
-//copy processa.argv to clipboard
+//remove all non-unique characters from chinese_string
+var unique_chars = chinese_string.split("").filter((v, i, a) => a.indexOf(v) === i).join("");
 
-var output = transliterated+"\n"+translated;
-clipboardy.writeSync(output);
-console.log(output);
+for (var i=0;i<unique_chars.length;i++){
+  var char = unique_chars[i];
+  var transliterated = TRANSLITERATE(char,false);
+  //generate translations
+  var translated = TRANSLATE(char);
+  var output_line = char+" "+transliterated+" "+translated;
+  output_line = output_line.trim();
+  if (output_line.indexOf("#")===-1 && output_line!==""){
+    output += '"'+char+" "+transliterated+" "+translated+'",\n';
+  }
+}
 
+//save output to output.txt
+fs.writeFileSync("output.txt",output,"utf8");
 
 if (entries_to_add.length>0){
   console.log("adding entries to ad_hoc_doc for characters " + entries_to_add.map(a=>a[0]).join("")+".");
@@ -417,5 +422,4 @@ if (entries_to_add.length>0){
 
 }
 
-});
-
+console.log("not found: "+not_found);

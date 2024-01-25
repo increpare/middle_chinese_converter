@@ -87,7 +87,7 @@ for (let i = 0; i < lines.length; i++) {
 var titles = poems.map(poem => poem.title);
 
 //HTML_TOC is a list of links like `<a class="toclink" href="#遠遊">遠遊</a>`
-var HTML_TOC = titles.map(title => `<a class="toclink" href="#${title}">${title}</a>`).join('');
+var HTML_TOC = titles.map(title => `<a class="toclink" href="#${title}">${title}</a>`).join('&#8203;');
 
 function punctuate(line) {
     //replaces 。 with <span class="punctuation">。</span>
@@ -198,7 +198,7 @@ function addDefinitions(char) {
     <span class="char">
         下
         <span class="tooltiptext">
-            <span class="defchar">下</span>
+            <span class="display_c">下</span>
             <hr>
             <span class="defpronounce">haeX</span><br>
             <span class="defgloss">down</span>
@@ -208,21 +208,21 @@ function addDefinitions(char) {
         </span>
     </span>
     */
-    var HTML_DEF = `<span class="char" onclick="">`;
+var HTML_DEF = `<span class="char" onclick="">\n`;
     HTML_DEF += `\t${char}\n`;
     HTML_DEF += `\t<span class="tooltiptext">\n`;
-    HTML_DEF += `\t\t<span class="defchar">${char}</span>\n`;
+    HTML_DEF += `\t\t<span class="display_c">${char}</span>\n`;
     var pronunciations = Object.keys(def);
 
     for (var i = 0; i < pronunciations.length; i++) {
         var pronunciation = pronunciations[i];
         HTML_DEF += `\t\t<hr>\n`;
-        HTML_DEF += `\t\t<span class="defpronounce">${tone_ize(pronunciation)}</span><br>`;
+        HTML_DEF += `\t\t<span class="defpronounce">${tone_ize(pronunciation)}</span><br>\n`;
         var defs = def[pronunciation];
-        HTML_DEF += `\t\t<span class="defgloss">${defs.join("<br>")}</span>`;
+        HTML_DEF += `\t\t<span class="defgloss">${defs.join("<br>")}</span>\n`;
     }
     HTML_DEF += `\t</span>\n`;
-    HTML_DEF += `</span>`;
+    HTML_DEF += `</span>\n`;
     return HTML_DEF;
 }
 
@@ -250,6 +250,7 @@ function generatePoemHTML(poem) {
         HTML_POEM += `${punctuate(addDefinitionsToLine(poem.body[i]))}<br>\n`;
     }
     HTML_POEM += `</div>\n`;
+    HTML_POEM += `</div>\n`;
     return HTML_POEM;
 }
 
@@ -259,192 +260,10 @@ var HTML_FILE = `<html>
 <head>
     <meta charset="utf-8" />
     <title>CODEX</title>
-    <style>
-         :root {
-            --main-bg-colour: #e5c8a0;
-            --main-text-colour: #271919;
-            --main-punctuation-colour: #b24838;
-        }
-        
-        @font-face {
-            font-family: noto_s;
-            src: url('NotoSerifTC-Medium.otf');
-        }
-        
-        @font-face {
-            font-family: garamondregular;
-            src: url("EBGaramond-Regular.ttf");
-        }
-
-        html{
-            
-            max-height: 100vh;
-            overflow-y: hidden;
-        }
-        body {
-            writing-mode: vertical-rl;
-            font-size: 30px;
-            font-family: noto_s;
-            margin: 0.67em;
-            height: 13em;
-            background-color: var(--main-bg-colour);
-            color: var(--main-text-colour);
-        }
-        /*remove style from links*/
-        a {
-            text-decoration: none;
-            color: var(--main-text-colour);            
-        }
-        
-        .pageouter {
-            border: 0.15em solid var(--main-text-colour);
-            padding: 0px;
-            /*fit to contents*/
-            display: inline-block;
-        }
-        
-        .page {
-            background-color: var(--main-bg-colour);
-            background-image: linear-gradient(0.25turn, var(--main-text-colour), var(--main-text-colour) 0.05em, var(--main-bg-colour) 1px);
-            background-size: 1.5em 100%;
-            line-height: 1.5em;
-            padding-top: 0.333em;
-            padding-bottom: 0.333em;
-            border: 0.05em solid var(--main-text-colour);
-            margin: 0.1em;
-            display: inline-block;
-        }
-        
-        .header:before {
-            content: "︗";
-            color: var(--main-punctuation-colour);
-        }
-        
-        .header:after {
-            content: "︘";
-            color: var(--main-punctuation-colour);
-        }
-        
-        .header {
-            font-size: 100%;
-            font-weight: normal;
-            margin: default;
-        }
-        
-        p {
-            font-size: 100%;
-            font-weight: normal;
-        }
-        
-        a.toclink {
-            font-size: 100%;
-            font-weight: normal;
-            text-decoration: none;
-            color: var(--main-text-colour);
-        }
-        
-        a.toclink:before {
-            content: "︗";
-            color: var(--main-punctuation-colour)
-        }
-        
-        a.toclink:after {
-            content: "︘";
-            color: var(--main-punctuation-colour)
-        }
-        
-        .toclink {
-            white-space: nowrap;
-        }
-        
-        .poem {
-            display: block;
-        }
-        /* empty line after .TOC */
-        
-        .TOC {
-            margin-left: 1.5em;
-        }
-        
-        .char {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .char:hover {
-            /*glow*/
-            text-shadow: 0 0 0.1em orange;
-        }
-        
-        .char .tooltiptext {
-            text-shadow: none;
-            visibility: hidden;
-            width: 4em;
-            background-color: var(--main-bg-colour);
-            color: var(--main-text-colour);
-            text-align: center;
-            padding: 5px 0;
-            border-radius: 6px;
-            border: 0.02em solid var(--main-text-colour);
-            writing-mode: horizontal-tb;
-            line-height: normal;
-            /* Position the tooltip text to the right of the highlighted character*/
-            position: absolute;
-            z-index: 1;
-            top: 0px;
-            left: 100%;
-            margin-left: 5px;
-            -webkit-backdrop-filter: blur(3px);
-            backdrop-filter: blur(3px);
-        }
-        
-        hr {
-            display: block;
-            height: 0.02em;
-            border: 0;
-            border-top: 0.02em solid var(--main-text-colour);
-            margin: 0;
-            padding: 0;
-            margin-top: 0.2em;
-          }
-          hr:first-of-type{
-            padding-top:0;
-            margin-top: 0;
-          }
-
-        .char:hover .tooltiptext {
-            visibility: visible;
-            opacity: 0.9;
-        }
-        
-        .defchar {
-            font-size: 150%;
-        }
-        
-        .defpronounce {
-            font-family: garamondregular;
-            font-size: 80%;
-            display: inline-block;
-        }
-        .defgloss {
-            font-size: 50%;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
-        
-        .punctuation {
-            /*
-        Chinese punctuation should float to the right between the neighbouring characters.
-        Remember we're in a vertical layout - you can't just float right, you have to manually offset the character.*/
-            position: relative;
-            top: -0.5em;
-            left: 0.55em;
-            /*and you have to make it so that it doesn't leave a gap between other charcaters*/
-            margin-bottom: -1em;
-            color: var(--main-punctuation-colour);
-        }
-    </style>
+    <!--include style.css!-->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body lang="zh-Hant"  id="top">
+<body lang="zh-Hant"  id="top" onclick="">
     <div class="pageouter">
         <div class="page">
             <div class="TOC" id="TOC">
@@ -455,6 +274,8 @@ var HTML_FILE = `<html>
             </div>
         </div>
     </div>
+    <!--embed script.js!-->
+    <script src="script.js"></script>
 </body>
 </html>`;
 //write to disk

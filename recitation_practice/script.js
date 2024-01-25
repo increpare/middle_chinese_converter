@@ -1,6 +1,21 @@
+var lastselected=null;
 function onCharHover(event){
+	event.stopPropagation();
+	
+	if (lastselected==event.target) {
+		return;
+	}
+
+	
 	var char = event.target;
 	var element = char.getElementsByClassName("tooltiptext")[0];
+
+	element.style.display="block";
+	if (lastselected != null) {
+		lastselected.style.display="";
+	}
+
+	window.getComputedStyle(element);
 	element.style.top = "0px";
 	element.style.bottom ="";
 
@@ -45,18 +60,39 @@ function onCharHover(event){
 		element.style.left = "";
 		element.style.right = "0%";
 	}
+
+	lastselected = element;
+	//don't bubble up to body
+}
+
+var unhover = function(event){
+	event.target.style.display="";
 }
 
 //attach an event that trigger whenever a char has onmouseover triggered
 var chars = document.getElementsByClassName("char");
 for (var i = 0; i < chars.length; i++) {
-	chars[i].addEventListener("mouseover", onCharHover);
+	chars[i].addEventListener("pointerover", onCharHover);
+	// chars[i].addEventListener("pointerdown", onCharHover);
 }
+
+document.body.addEventListener("pointerover", function(event){
+	if (lastselected != null) {
+		lastselected.style.display="";
+	}
+});
+
+// document.body.addEventListener("touchstart", function(event){
+// 	if (lastselected != null) {
+// 		lastselected.style.display="";
+// 	}
+// });
+
 // on mouseover definition, hide it
-var definitions = document.getElementsByClassName("tooltiptext");
-for (var i = 0; i < definitions.length; i++) {
-	var d = definitions[i];
-	d.addEventListener("mouseover", function(event){
-		event.target.style.visibility = "hidden";
-	});
-}
+// var definitions = document.getElementsByClassName("tooltiptext");
+// for (var i = 0; i < definitions.length; i++) {
+// 	var d = definitions[i];
+// 	d.addEventListener("mouseover", function(event){
+// 		event.target.style.visibility = "hidden";
+// 	});
+// }

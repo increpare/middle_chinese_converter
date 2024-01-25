@@ -84,11 +84,6 @@ for (let i = 0; i < lines.length; i++) {
     }
 }
 
-var titles = poems.map(poem => poem.title);
-
-//HTML_TOC is a list of links like `<a class="toclink" href="#遠遊">遠遊</a>`
-var HTML_TOC = titles.map(title => `<a class="toclink" href="#${title}">${title}</a>`).join('&#8203;');
-
 function punctuate(line) {
     //replaces 。 with <span class="punctuation">。</span>
     return line.replace(/。/g, '<span class="punctuation">。</span>');
@@ -184,6 +179,11 @@ var tone_ize = function (str, forcetone) {
     return str;
 }
 
+function addLineBreakOpportunities(str){
+    //add <wbr> both sides of all slashes
+    return str.replace(/\//g, "<wbr>/<wbr>");
+    
+}
 function addDefinitions(char) {
     if (char === "。") {
         return char;
@@ -208,8 +208,8 @@ function addDefinitions(char) {
         </span>
     </span>
     */
-var HTML_DEF = `<span class="char" onclick="">\n`;
-    HTML_DEF += `\t${char}\n`;
+var HTML_DEF = `<span class="char" onclick="">`;
+    HTML_DEF += `${char}`;
     HTML_DEF += `\t<span class="tooltiptext">\n`;
     HTML_DEF += `\t\t<span class="display_c">${char}</span>\n`;
     var pronunciations = Object.keys(def);
@@ -219,10 +219,10 @@ var HTML_DEF = `<span class="char" onclick="">\n`;
         HTML_DEF += `\t\t<hr>\n`;
         HTML_DEF += `\t\t<span class="defpronounce">${tone_ize(pronunciation)}</span><br>\n`;
         var defs = def[pronunciation];
-        HTML_DEF += `\t\t<span class="defgloss">${defs.join("<br>")}</span>\n`;
+        HTML_DEF += `\t\t<span class="defgloss">${addLineBreakOpportunities(defs.join("<br>"))}</span>\n`;
     }
     HTML_DEF += `\t</span>\n`;
-    HTML_DEF += `</span>\n`;
+    HTML_DEF += `</span>`;
     return HTML_DEF;
 }
 
@@ -254,11 +254,21 @@ function generatePoemHTML(poem) {
     return HTML_POEM;
 }
 
+var titles = poems.map(poem => poem.title);
+
+//HTML_TOC is a list of links like `<a class="toclink" href="#遠遊">遠遊</a>`
+var HTML_TOC = titles.map(title => `<a class="toclink" href="#${title}">${addDefinitionsToLine(title)}</a>`).join('&#8203;');
+
+
 var HTML_POEMS = poems.map(poem => generatePoemHTML(poem)).join('\n');
 
 var HTML_FILE = `<html>
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta name="apple-mobile-web-app-title" content="CODEX" />
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>CODEX</title>
     <!--include style.css!-->
     <link rel="stylesheet" href="style.css">

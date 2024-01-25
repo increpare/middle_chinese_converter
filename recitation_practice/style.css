@@ -2,10 +2,18 @@
     --main-bg-colour: #e5c8a0;
     --main-text-colour: #271919;
     --main-punctuation-colour: #b24838;
-    --character-size:6vh;
-    --line-height-pixels: round(6vh*1.5,1px);
+    --character-size:7vh;
+    --line-height-pixels: round( var(--character-size)*1.5, 1px );
+}
 
 
+html{
+    margin:0;
+    padding:0;
+    overflow-y: hidden;
+    /*height is full viewport*/
+    height:100%;
+    overscroll-behavior: none;
 }
 
 @font-face {
@@ -18,21 +26,23 @@
     src: url("EBGaramond-Regular.ttf");
 }
 
-html {
-
-}
-
 body {
+    position: absolute;
+    overflow-y: hidden;
+    overscroll-behavior: none;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top: 1em;
+
     writing-mode: vertical-rl;
+
+    height:calc(100% - 1em);
     font-size: var(--character-size);
     font-family: noto_s;
-    margin: 0.67em;
-    height: 13em;
+
+    /* height: 11.7em; */
     background-color: var(--main-bg-colour);
     color: var(--main-text-colour);
-
-    max-height: 100vh;
-    overflow-y: hidden;
 }
 
 
@@ -45,6 +55,7 @@ a {
 .pageouter {
     border: 0.15em solid var(--main-text-colour);
     padding: 0px;
+    height:11.5em;
     /*fit to contents*/
     display: inline-block;
 }
@@ -64,17 +75,18 @@ a {
 .header:before {
     content: "︗";
     color: var(--main-punctuation-colour);
+    pointer-events: none;
 }
 
 .header:after {
     content: "︘";
     color: var(--main-punctuation-colour);
+    pointer-events: none;
 }
 
 .header {
     font-size: 100%;
     font-weight: normal;
-    margin: default;
 }
 
 p {
@@ -89,7 +101,7 @@ a.toclink {
     color: var(--main-text-colour);
 }
 
-a.toclink:before {
+/* a.toclink:before {
     content: "︗";
     color: var(--main-punctuation-colour)
 }
@@ -97,10 +109,20 @@ a.toclink:before {
 a.toclink:after {
     content: "︘";
     color: var(--main-punctuation-colour)
+} */
+/* insert commas between a.toclink's*/
+a.toclink:not(:last-child):after {
+    content: "、 ";
+    position: relative;
+    top: -0.4em;
+    left: 0.55em;
+    /*and you have to make it so that it doesn't leave a gap between other charcaters*/
+    margin-bottom: -1.2em;
+    color: var(--main-punctuation-colour);
+    pointer-events: none;
 }
-
 .toclink {
-    white-space: nowrap;
+    /* white-space: nowrap; */
 }
 
 .poem {
@@ -120,23 +142,27 @@ a.toclink:after {
 
 .char:hover {
     /*glow*/
-    text-shadow: 0 0 0.1em orange;
+    /* text-shadow: 0 0 0.1em orange; */
+    color: var(--main-punctuation-colour);
 }
 
 .char .tooltiptext {
+
+    opacity: 0.9;
+    pointer-events: none;
     text-shadow: none;
-    visibility: hidden;
-    width: 4em;
+    display:none;
+    width:3em;
     background-color: var(--main-bg-colour);
     color: var(--main-text-colour);
     text-align: center;
     padding: 0.1em 0;
+    padding-top:0em;
     padding-bottom: 0.5em;
     border-radius: 0.5em;
     border: 0.05em solid var(--main-text-colour);
     writing-mode: horizontal-tb;
     line-height: normal;
-    /* Position the tooltip text to the right of the highlighted character*/
     position: absolute;
     z-index: 1;
     top: 0px;
@@ -144,6 +170,26 @@ a.toclink:after {
     margin-left: 5px;
     -webkit-backdrop-filter: blur(0.06em);
     backdrop-filter: blur(0.06em);
+}
+
+
+.display_c {
+    font-size: 100%;
+}
+
+.defpronounce {
+    font-family: garamondregular;
+    font-size: 50%;
+    display: inline-block;
+}
+
+.defgloss {
+    font-size: 40%;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    min-width: 2em;
+    max-width: 3em;
 }
 
 hr {
@@ -161,36 +207,12 @@ hr:first-of-type {
     margin-top: 0;
 }
 
-.char:hover .tooltiptext {
-    visibility: visible;
-    opacity: 0.9;
-}
-
-.display_c {
-    font-size: 150%;
-}
-
-.defpronounce {
-    font-family: garamondregular;
-    font-size: 80%;
-    display: inline-block;
-}
-
-.defgloss {
-    font-size: 50%;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-}
 
 .punctuation {
-    /*
-Chinese punctuation should float to the right between the neighbouring characters.
-Remember we're in a vertical layout - you can't just float right, you have to manually offset the character.*/
     position: relative;
     top: -0.5em;
     left: 0.55em;
-    /*and you have to make it so that it doesn't leave a gap between other charcaters*/
     margin-bottom: -1em;
     color: var(--main-punctuation-colour);
+    pointer-events: none;
 }

@@ -2,13 +2,15 @@ var lastselected=null;
 function onCharHover(event){
 	event.stopPropagation();
 	
-	if (lastselected==event.target) {
-		return;
-	}
-
 	
 	var char = event.target;
 	var element = char.getElementsByClassName("tooltiptext")[0];
+
+
+	if (lastselected===element) {
+		return;
+	}
+
 
 	element.style.display="block";
 	if (lastselected != null) {

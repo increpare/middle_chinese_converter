@@ -14,6 +14,7 @@ html{
     /*height is full viewport*/
     height:100%;
     overscroll-behavior: none;
+    cursor:default;
 }
 
 @font-face {
@@ -140,18 +141,14 @@ a.toclink:not(:last-child):after {
     display: inline-block;
 }
 
-.char:hover {
-    /*glow*/
-    /* text-shadow: 0 0 0.1em orange; */
-    color: var(--main-punctuation-colour);
-}
-
 .char .tooltiptext {
+    writing-mode: horizontal-tb;
 
     opacity: 0.9;
     pointer-events: none;
     text-shadow: none;
     display:none;
+    position: absolute;
     width:3em;
     background-color: var(--main-bg-colour);
     color: var(--main-text-colour);
@@ -161,9 +158,7 @@ a.toclink:not(:last-child):after {
     padding-bottom: 0.5em;
     border-radius: 0.5em;
     border: 0.05em solid var(--main-text-colour);
-    writing-mode: horizontal-tb;
     line-height: normal;
-    position: absolute;
     z-index: 1;
     top: 0px;
     left: 100%;

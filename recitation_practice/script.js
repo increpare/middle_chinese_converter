@@ -1,20 +1,39 @@
 var lastselected=null;
-function onCharHover(event){
-	event.stopPropagation();
+function onCharHover(event,char,force=false){
+	// event.stopPropagation();
+
 	
-	
-	var char = event.target;
+	//if char not set, set it to event.target
+	if (char === undefined) {
+		char = event.target;
+	}
+	//if char not of class char, return
+	if (!char.className.includes("char")) {
+		return;
+	}
 	var element = char.getElementsByClassName("tooltiptext")[0];
-
-
-	if (lastselected===element) {
+	if (element === undefined) {
+		console.log("no definition for " + char + "of class " + char.className);
 		return;
 	}
 
 
+	if (lastselected===element&&!force) {
+		console.log("already selected "+element.textContent);		
+		return;
+	}
+	
+	//print event name
+	console.log(event.type);
+
+	console.log("element on "+element);
+
 	element.style.display="block";
-	if (lastselected != null) {
+	char.style.color="var(--main-punctuation-colour)";
+	if (lastselected !== null && lastselected !== element) {
 		lastselected.style.display="";
+		lastselected.parentElement.style.color="";
+		console.log("clearing lastselected " + lastselected)
 	}
 
 	window.getComputedStyle(element);
@@ -25,7 +44,6 @@ function onCharHover(event){
 	let is_above_parent = element.offsetLeft < 0;
 	
 	let rect = element.getBoundingClientRect();
-	console.log("The bounding Rect of element is ", rect)
 	// get the height of the window 
 	let viewPortBottom = window.innerHeight || document.documentElement.clientHeight;
 	// get the width of the window 
@@ -68,21 +86,62 @@ function onCharHover(event){
 }
 
 var unhover = function(event){
-	event.target.style.display="";
+	event.target.style.display="";	
+	event.target.parentElement.style.color="";
+	console.log("unhover " + event.target);
 }
 
 //attach an event that trigger whenever a char has onmouseover triggered
 var chars = document.getElementsByClassName("char");
 for (var i = 0; i < chars.length; i++) {
 	chars[i].addEventListener("pointerover", onCharHover);
-	// chars[i].addEventListener("pointerdown", onCharHover);
+	//also do this for touch input
+	chars[i].addEventListener("touchstart", onCharHover);
+	//and touch drag
+	chars[i].addEventListener("touchmove", function(e){
+		// e.preventDefault();
+		// e.bubbles = false;
+		// e.stopPropagation();
+		//get item at touch location
+		var touch = e.touches[0];
+		var element = document.elementFromPoint(touch.clientX, touch.clientY);
+		onCharHover(e,element,true);
+	});
 }
 
 document.body.addEventListener("pointerover", function(event){
+	//if event target is char, ignore
+	if (event.target.className.includes("char")) {
+		return;
+	}
 	if (lastselected != null) {
 		lastselected.style.display="";
+		lastselected.parentElement.style.color="";
+		lastselected=null;
+		console.log("body over");
 	}
 });
+
+/*
+If you click and drag on a char element, scrolling will be disabled.
+*/
+document.body.addEventListener("pointerdown", function(event){
+	//if target is char
+	if (event.target.className.includes("char")) {
+		// event.stopPropagation();
+		// event.preventDefault();
+	}
+});
+
+//also disable scrolling for touch input
+// document.body.addEventListener("touchmove", function(event){
+// 	//if target is char
+// 	if (event.target.className.includes("char")) {
+// 		event.stopPropagation();
+// 		event.preventDefault();
+// 	}
+// });
+
 
 // document.body.addEventListener("touchstart", function(event){
 // 	if (lastselected != null) {

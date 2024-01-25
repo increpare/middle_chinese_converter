@@ -32,7 +32,7 @@ body {
     color: var(--main-text-colour);
 
     max-height: 100vh;
-    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 

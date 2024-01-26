@@ -7,7 +7,6 @@ process.chdir(path.dirname(process.argv[1]));
 function generateDict() {
     var values = [];
 
-    var ad_hoc_chars = [];
     var easyvalues_lines = fs.readFileSync('../standalone/data/ad_hoc_doc.tsv').toString().split("\n");
     for (var i = 0; i < easyvalues_lines.length; i++) {
         var line = easyvalues_lines[i];
@@ -16,7 +15,6 @@ function generateDict() {
         var mc = split[1];
         var rest = split[2];
         var oc = split[4];
-        ad_hoc_chars.push([char, mc, rest]);
         values.push([char, "", mc, "", oc, rest]);
     }
 
@@ -37,22 +35,22 @@ function generateDict() {
         const entry = values[i];
         const hansi = entry[0];
         const mc = entry[2];
-        const def = entry[5];
         const oc = entry[4];
-
+        const def = entry[5];
+        
         if (!dict.hasOwnProperty(hansi)) {
             dict[hansi] = {}
-            dict[hansi][mc] = [def, oc];
+            dict[hansi][mc] = def;
         } else {
             var dictentry = dict[hansi];
             if (!dictentry.hasOwnProperty(mc)) {
-                dict[hansi][mc] = [def, oc]
-            }
-            if (dict[hansi][mc][0] !== def) {
-                dict[hansi][mc][0] += "/" + def;
-            }
-            if (dict[hansi][mc][1] !== oc) {
-                dict[hansi][mc][1] += "/" + oc;
+                dict[hansi][mc] = def;
+            } else {
+                //otherwise if it's entry doesn't contain def already
+                var definition = dictentry[mc];
+                if (definition.indexOf(def) < 0) {
+                    dict[hansi][mc]+="/"+def;
+                }
             }
         }
     }
@@ -218,8 +216,8 @@ var HTML_DEF = `<span class="char" onclick="">`;
         var pronunciation = pronunciations[i];
         HTML_DEF += `\t\t<hr>\n`;
         HTML_DEF += `\t\t<span class="defpronounce">${tone_ize(pronunciation)}</span><br>\n`;
-        var defs = def[pronunciation];
-        HTML_DEF += `\t\t<span class="defgloss">${addLineBreakOpportunities(defs.join("<br>"))}</span>\n`;
+        var defs = def[pronunciation];        
+        HTML_DEF += `\t\t<span class="defgloss">${addLineBreakOpportunities(defs)}</span>\n`;
     }
     HTML_DEF += `\t</span>\n`;
     HTML_DEF += `</span>`;

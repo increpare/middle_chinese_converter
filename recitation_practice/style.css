@@ -154,7 +154,7 @@ a.toclink:not(:last-child):after {
     text-align: center;
     padding: 0.1em 0;
     padding-top:0em;
-    padding-bottom: 0.5em;
+    padding-bottom: 0.3em;
     border-radius: 0.5em;
     border: 0.05em solid var(--main-text-colour);
     line-height: normal;

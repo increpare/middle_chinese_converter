@@ -124,18 +124,21 @@ for (var i = 0; i < display_c.length; i++) {
 }
 
 document.body.addEventListener("pointerover", function(event){
-	console.log("pointerover" + event.target.className);
-	return;
+	// console.log("pointerover" + event.target.className);
+	// return;
 	//if event target is char, ignore
-	if (event.target.className.includes("char")) {
-		return;
-	}
-	if (lastselected != null) {
-		lastselected.style.display="";
-		lastselected.parentElement.style.color="";
-		lastselected=null;
+	var objectatpoint = document.elementFromPoint(event.clientX, event.clientY);
+
+	if (objectatpoint==null||objectatpoint.className.includes("page") || objectatpoint.className.includes("pageouter") || objectatpoint.tagName == "BODY" || objectatpoint.className.includes("content") ) 
+	{
+		if (lastselected !== null) {
+			lastselected.style.display="";
+			lastselected.parentElement.style.color="";
+			lastselected=null;
+		}
 	}
 });
+
 document.body.addEventListener("touchend", function(event){
 	console.log("touchened");
 	//if event target is char, ignore
@@ -159,19 +162,6 @@ document.body.addEventListener("touchend", function(event){
 	}	
 });
 
-//also for touchmove
-// document.body.addEventListener("touchmove", function(event){
-// 	var objectatpoint = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
-// 	if (objectatpoint!==null && objectatpoint.className.includes("char")) {
-// 		return;
-// 	}
-// 	if (lastselected != null) {
-// 		lastselected.style.display="";
-// 		lastselected.parentElement.style.color="";
-// 		lastselected=null;
-// 		console.log("body over");
-// 	}
-// });
 
 /*
 If you click and drag on a char element, scrolling will be disabled.

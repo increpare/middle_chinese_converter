@@ -125,16 +125,29 @@ for (var i = 0; i < display_c.length; i++) {
 }
 
 document.body.addEventListener("pointerover", function(event){
-	// //if event target is char, ignore
-	// if (event.target.className.includes("char")) {
-	// 	return;
-	// }
-	// if (lastselected != null) {
-	// 	lastselected.style.display="";
-	// 	lastselected.parentElement.style.color="";
-	// 	lastselected=null;
-	// 	console.log("body over");
-	// }
+	//if event target is char, ignore
+	if (event.target.className.includes("char")) {
+		return;
+	}
+	if (lastselected != null) {
+		lastselected.style.display="";
+		lastselected.parentElement.style.color="";
+		lastselected=null;
+		console.log("body over");
+	}
+});
+//also for touchmove
+document.body.addEventListener("touchmove", function(event){
+	//if event target is char, ignore
+	if (event.target.className.includes("char")) {
+		return;
+	}
+	if (lastselected != null) {
+		lastselected.style.display="";
+		lastselected.parentElement.style.color="";
+		lastselected=null;
+		console.log("body over");
+	}
 });
 
 /*

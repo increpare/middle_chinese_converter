@@ -160,7 +160,7 @@ a.toclink:not(:last-child):after {
     line-height: normal;
     z-index: 1;
     top: 0px;
-    right: 87%;
+    left: 90%;
     -webkit-backdrop-filter: blur(0.06em);
     backdrop-filter: blur(0.06em);
 }

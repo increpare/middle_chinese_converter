@@ -218,7 +218,7 @@ var HTML_DEF = `<span class="char" onclick="">`;
         HTML_DEF += `\t\t<hr>\n`;
         HTML_DEF += `\t\t<span class="defpronounce">${tone_ize(pronunciation)}</span><br>\n`;
         var defs = def[pronunciation];        
-        HTML_DEF += `\t\t<span class="defgloss">${addLineBreakOpportunities(defs)}</span>\n`;
+        HTML_DEF += `\t\t<span class="defgloss" lang="en">${addLineBreakOpportunities(defs)}</span>\n`;
     }
     HTML_DEF += `\t</span>\n`;
     HTML_DEF += `</span>`;

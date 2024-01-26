@@ -36,50 +36,50 @@ function onCharHover(event,char,force=false){
 		console.log("clearing lastselected " + lastselected)
 	}
 
-	window.getComputedStyle(element);
-	element.style.top = "0px";
-	element.style.bottom ="";
+	// window.getComputedStyle(element);
+	// element.style.top = "0px";
+	// element.style.bottom ="";
 
-	let is_left_of_parent = element.offsetLeft < 0;
-	let is_above_parent = element.offsetLeft < 0;
+	// let is_left_of_parent = element.offsetLeft < 0;
+	// let is_above_parent = element.offsetLeft < 0;
 	
-	let rect = element.getBoundingClientRect();
-	// get the height of the window 
-	let viewPortBottom = window.innerHeight || document.documentElement.clientHeight;
-	// get the width of the window 
-	let viewPortRight = window.innerWidth || document.documentElement.clientWidth;
+	// let rect = element.getBoundingClientRect();
+	// // get the height of the window 
+	// let viewPortBottom = window.innerHeight || document.documentElement.clientHeight;
+	// // get the width of the window 
+	// let viewPortRight = window.innerWidth || document.documentElement.clientWidth;
 
-	let isTopInViewPort = rect.top >= 0;
-	let	isLeftInViewPort = rect.left >= 0;
-	let	isBottomInViewPort = rect.bottom +10<= viewPortBottom;
-	let	isRightInViewPort = rect.right <= viewPortRight;
+	// let isTopInViewPort = rect.top >= 0;
+	// let	isLeftInViewPort = rect.left >= 0;
+	// let	isBottomInViewPort = rect.bottom +10<= viewPortBottom;
+	// let	isRightInViewPort = rect.right <= viewPortRight;
 
-	/*
-	default style coordinates of element are:
-	top: 0px;
-	left: 100%;
-	*/
-	if (!isTopInViewPort) {
-		element.style.height = "";
-		element.style.top = "";
-		element.style.bottom ="100%";
-	}
-	if (!isBottomInViewPort) {
-		/*position top so that the bottom is flush with the bottom of the viewport*/
-		element.style.top = `${viewPortBottom-rect.bottom-10}px`;				
-		element.style.bottom = "";
-	}
-	//if left part isn't in view, flip to right side of char
-	if (!isLeftInViewPort) {
-		element.style.left = "100%";
-		element.style.right = "";
-	}
+	// /*
+	// default style coordinates of element are:
+	// top: 0px;
+	// left: 100%;
+	// */
+	// if (!isTopInViewPort) {
+	// 	element.style.height = "";
+	// 	element.style.top = "";
+	// 	element.style.bottom ="100%";
+	// }
+	// if (!isBottomInViewPort) {
+	// 	/*position top so that the bottom is flush with the bottom of the viewport*/
+	// 	element.style.top = `${viewPortBottom-rect.bottom-10}px`;				
+	// 	element.style.bottom = "";
+	// }
+	// //if left part isn't in view, flip to right side of char
+	// if (!isLeftInViewPort) {
+	// 	element.style.left = "100%";
+	// 	element.style.right = "";
+	// }
 
-	//if right part isn't in view, flip to left side of char
-	if (!isRightInViewPort) {
-		element.style.left = "";
-		element.style.right = "0%";
-	}
+	// //if right part isn't in view, flip to left side of char
+	// if (!isRightInViewPort) {
+	// 	element.style.left = "";
+	// 	element.style.right = "0%";
+	// }
 
 	lastselected = element;
 	//don't bubble up to body

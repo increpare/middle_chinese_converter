@@ -4,7 +4,7 @@ function onCharHover(event,char,force=false){
 
 	
 	//if char not set, set it to event.target
-	if (char === undefined) {
+	if (char === undefined||char===null) {
 		char = event.target;
 	}
 	//if char not of class char, return
@@ -26,7 +26,7 @@ function onCharHover(event,char,force=false){
 	//print event name
 	console.log(event.type);
 
-	console.log("element on "+element);
+	console.log("element on "+element+ "-"+element.className);
 
 	element.style.display="block";
 	char.style.color="var(--main-punctuation-colour)";
@@ -96,7 +96,7 @@ var chars = document.getElementsByClassName("char");
 for (var i = 0; i < chars.length; i++) {
 	chars[i].addEventListener("pointerover", onCharHover);
 	//also do this for touch input
-	chars[i].addEventListener("touchstart", onCharHover);
+	chars[i].addEventListener("touchstart", onCharHover,{passive: true});
 	//and touch drag
 	chars[i].addEventListener("touchmove", function(e){
 		// e.preventDefault();
@@ -106,16 +106,15 @@ for (var i = 0; i < chars.length; i++) {
 		var touch = e.touches[0];
 		var element = document.elementFromPoint(touch.clientX, touch.clientY);
 		onCharHover(e,element,true);
-	});
+	},{passive: true});
 }
 
 //get all "display_c" elements
 var display_c = document.getElementsByClassName("display_c");
 for (var i = 0; i < display_c.length; i++) {
 	//on tap, open up pleco
-	display_c[i].addEventListener("click" , function(e){
-		console.log("clicked on " +e.target.textContent);
-
+	display_c[i].addEventListener("click", function(e){
+		console.log("touchstart");
 		//open up this url plecoapi://x-callback-url/s?q="${char}"</a>
 		var char = e.target.textContent;
 		var url = `plecoapi://x-callback-url/s?q=${char}`;
@@ -125,7 +124,8 @@ for (var i = 0; i < display_c.length; i++) {
 }
 
 document.body.addEventListener("pointerover", function(event){
-	console.log("pointerover");
+	console.log("pointerover" + event.target.className);
+	return;
 	//if event target is char, ignore
 	if (event.target.className.includes("char")) {
 		return;
@@ -144,9 +144,13 @@ document.body.addEventListener("touchend", function(event){
 	// }
 	//if touch point is currently hovering over the body
 	var objectatpoint = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
-	console.log("objectatpoint " + objectatpoint.classList);
+	if (objectatpoint === null) {
+		console.log("objectatpoint is null");
+	} else {
+		console.log("objectatpoint " + objectatpoint.classList);
+	}
 	//if page or pageouter or body
-	if (objectatpoint.className.includes("page") || objectatpoint.className.includes("pageouter") || objectatpoint.tagName == "BODY" || objectatpoint.className.includes("content") ) {
+	if (objectatpoint==null||objectatpoint.className.includes("page") || objectatpoint.className.includes("pageouter") || objectatpoint.tagName == "BODY" || objectatpoint.className.includes("content") ) {
 		if (lastselected != null) {
 			lastselected.style.display="";
 			lastselected.parentElement.style.color="";
@@ -156,18 +160,18 @@ document.body.addEventListener("touchend", function(event){
 });
 
 //also for touchmove
-document.body.addEventListener("touchmove", function(event){
-	//if event target is char, ignore
-	if (event.target.className.includes("char")) {
-		return;
-	}
-	if (lastselected != null) {
-		lastselected.style.display="";
-		lastselected.parentElement.style.color="";
-		lastselected=null;
-		console.log("body over");
-	}
-});
+// document.body.addEventListener("touchmove", function(event){
+// 	var objectatpoint = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+// 	if (objectatpoint!==null && objectatpoint.className.includes("char")) {
+// 		return;
+// 	}
+// 	if (lastselected != null) {
+// 		lastselected.style.display="";
+// 		lastselected.parentElement.style.color="";
+// 		lastselected=null;
+// 		console.log("body over");
+// 	}
+// });
 
 /*
 If you click and drag on a char element, scrolling will be disabled.

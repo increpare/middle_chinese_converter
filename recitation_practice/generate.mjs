@@ -211,7 +211,7 @@ function addDefinitions(char) {
 var HTML_DEF = `<span class="char" onclick="">`;
     HTML_DEF += `${char}`;
     HTML_DEF += `\t<span class="tooltiptext">\n`;
-    HTML_DEF += `\t\t<span class="display_c">${char}</span>\n`;
+    HTML_DEF += `\t\t<span class="display_c" onclick="">${char}</span>\n`;
     var pronunciations = Object.keys(def);
 
     for (var i = 0; i < pronunciations.length; i++) {
@@ -269,6 +269,8 @@ var HTML_FILE = `<html>
     <meta name="apple-mobile-web-app-title" content="CODEX" />
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="apple-touch-icon" href="icon.png" />
+
     <title>CODEX</title>
     <!--include style.css!-->
     <link rel="stylesheet" href="style.css">

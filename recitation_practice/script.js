@@ -125,6 +125,7 @@ for (var i = 0; i < display_c.length; i++) {
 }
 
 document.body.addEventListener("pointerover", function(event){
+	console.log("pointerover");
 	//if event target is char, ignore
 	if (event.target.className.includes("char")) {
 		return;
@@ -133,9 +134,27 @@ document.body.addEventListener("pointerover", function(event){
 		lastselected.style.display="";
 		lastselected.parentElement.style.color="";
 		lastselected=null;
-		console.log("body over");
 	}
 });
+document.body.addEventListener("touchend", function(event){
+	console.log("touchened");
+	//if event target is char, ignore
+	// if (event.target.className.includes("char")) {
+	// 	return;
+	// }
+	//if touch point is currently hovering over the body
+	var objectatpoint = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+	console.log("objectatpoint " + objectatpoint.classList);
+	//if page or pageouter or body
+	if (objectatpoint.className.includes("page") || objectatpoint.className.includes("pageouter") || objectatpoint.tagName == "BODY" || objectatpoint.className.includes("content") ) {
+		if (lastselected != null) {
+			lastselected.style.display="";
+			lastselected.parentElement.style.color="";
+			lastselected=null;
+		}
+	}	
+});
+
 //also for touchmove
 document.body.addEventListener("touchmove", function(event){
 	//if event target is char, ignore

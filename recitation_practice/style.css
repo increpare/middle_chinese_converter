@@ -76,7 +76,7 @@ a {
 .header:before {
     content: "︗";
     color: var(--main-punctuation-colour);
-    pointer-events: none;
+    pointer-events: none;    
 }
 
 .header:after {
@@ -145,7 +145,6 @@ a.toclink:not(:last-child):after {
     writing-mode: horizontal-tb;
 
     opacity: 0.9;
-    pointer-events: none;
     text-shadow: none;
     display:none;
     position: absolute;
@@ -170,6 +169,7 @@ a.toclink:not(:last-child):after {
 
 .display_c {
     font-size: 100%;
+    pointer-events: all;
 }
 
 .defpronounce {

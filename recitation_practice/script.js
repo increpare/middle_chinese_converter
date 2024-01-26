@@ -109,29 +109,44 @@ for (var i = 0; i < chars.length; i++) {
 	});
 }
 
+//get all "display_c" elements
+var display_c = document.getElementsByClassName("display_c");
+for (var i = 0; i < display_c.length; i++) {
+	//on tap, open up pleco
+	display_c[i].addEventListener("click" , function(e){
+		console.log("clicked on " +e.target.textContent);
+
+		//open up this url plecoapi://x-callback-url/s?q="${char}"</a>
+		var char = e.target.textContent;
+		var url = `plecoapi://x-callback-url/s?q=${char}`;
+		window.open(url);
+	});
+
+}
+
 document.body.addEventListener("pointerover", function(event){
-	//if event target is char, ignore
-	if (event.target.className.includes("char")) {
-		return;
-	}
-	if (lastselected != null) {
-		lastselected.style.display="";
-		lastselected.parentElement.style.color="";
-		lastselected=null;
-		console.log("body over");
-	}
+	// //if event target is char, ignore
+	// if (event.target.className.includes("char")) {
+	// 	return;
+	// }
+	// if (lastselected != null) {
+	// 	lastselected.style.display="";
+	// 	lastselected.parentElement.style.color="";
+	// 	lastselected=null;
+	// 	console.log("body over");
+	// }
 });
 
 /*
 If you click and drag on a char element, scrolling will be disabled.
 */
-document.body.addEventListener("pointerdown", function(event){
-	//if target is char
-	if (event.target.className.includes("char")) {
-		// event.stopPropagation();
-		// event.preventDefault();
-	}
-});
+// document.body.addEventListener("pointerdown", function(event){
+// 	//if target is char
+// 	if (event.target.className.includes("char")) {
+// 		// event.stopPropagation();
+// 		// event.preventDefault();
+// 	}
+// });
 
 //also disable scrolling for touch input
 // document.body.addEventListener("touchmove", function(event){

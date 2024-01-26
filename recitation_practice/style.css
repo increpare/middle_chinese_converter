@@ -160,8 +160,7 @@ a.toclink:not(:last-child):after {
     line-height: normal;
     z-index: 1;
     top: 0px;
-    left: 100%;
-    margin-left: 5px;
+    right: 87%;
     -webkit-backdrop-filter: blur(0.06em);
     backdrop-filter: blur(0.06em);
 }
@@ -181,8 +180,8 @@ a.toclink:not(:last-child):after {
 .defgloss {
     font-size: 40%;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    padding-left: 0.3em;
-    padding-right: 0.3em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
     min-width: 2em;
     max-width: 3em;
 }

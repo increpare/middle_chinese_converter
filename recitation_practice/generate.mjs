@@ -179,7 +179,8 @@ var tone_ize = function (str, forcetone) {
 
 function addLineBreakOpportunities(str){
     //add <wbr> both sides of all slashes
-    return str.replace(/\//g, "<wbr>/<wbr>");
+    str = str.replace(/\//g, "/<wbr>");
+    return str.replace(/; */g, "; <wbr>");
     
 }
 function addDefinitions(char) {

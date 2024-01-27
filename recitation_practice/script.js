@@ -85,6 +85,7 @@ for (var i = 0; i < display_c.length; i++) {
 	display_c[i].addEventListener("click", function(e){
 		console.log("touchstart");
 		var char = e.target.textContent;
+		char = char[0];
 		var url = `plecoapi://x-callback-url/s?q=${char}`;
 		window.open(url);
 	});

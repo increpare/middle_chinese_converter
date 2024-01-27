@@ -27,6 +27,10 @@ html{
     src: url("EBGaramond-Regular.ttf");
 }
 
+@font-face {
+    font-family: cursivechinese;
+    src: url("cursive.ttf");
+}
 body {
     position: absolute;
     overflow-y: hidden;
@@ -169,6 +173,12 @@ a.toclink:not(:last-child):after {
 .display_c {
     font-size: 100%;
     pointer-events: all;
+}
+
+.cursive {
+    padding-left: 0.2em;;
+    font-family: cursivechinese;
+    font-size: 100%;
 }
 
 .defpronounce {

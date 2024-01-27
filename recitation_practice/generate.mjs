@@ -210,7 +210,7 @@ function addDefinitions(char) {
 var HTML_DEF = `<span class="char" onclick="">`;
     HTML_DEF += `${char}`;
     HTML_DEF += `\t<span class="tooltiptext">\n`;
-    HTML_DEF += `\t\t<span class="display_c" onclick="">${char}</span>\n`;
+    HTML_DEF += `\t\t<span class="display_c" onclick="">${char}<span class="cursive">${char}</span></span>\n`;
     var pronunciations = Object.keys(def);
 
     for (var i = 0; i < pronunciations.length; i++) {

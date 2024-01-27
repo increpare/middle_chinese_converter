@@ -9,11 +9,28 @@ function onCharHover(event,char,force=false){
 		return;
 	}
 
+
 	var element = char.getElementsByClassName("tooltiptext")[0];
 	if (element === undefined) {
 		console.log("no definition for " + char + "of class " + char.className);
 		return;
 	}
+
+	//char centerpoint
+	var rect = char.getBoundingClientRect();
+	var cx = rect.left + rect.width/2;
+	var cy = rect.top + rect.height/2;
+	//if cx is less than half the width of the screen, then the char is on the left side of the screen
+	var left = cx < window.innerWidth/2;
+	//if it's on the left, show the definition on the right, and vice versa
+	if (left){
+		element.style.left = "90%";
+		element.style.right = "";		
+	} else {
+		element.style.left = "";
+		element.style.right = "90%";		
+	}
+	
 
 	if (lastselected===element&&!force) {
 		console.log("already selected "+element.textContent);		
@@ -23,7 +40,17 @@ function onCharHover(event,char,force=false){
 	console.log(event.type);
 	console.log("element on "+element+ "-"+element.className);
 
+	element.style.top = "0px";
 	element.style.display="block";
+	//recalculate element bounds
+	rect = element.getBoundingClientRect();
+
+	//if bottom of element is below bottom of screen, move it up
+	if (rect.bottom > window.innerHeight) {
+		element.style.top = (window.innerHeight - rect.bottom-5) + "px";
+	}
+
+	
 	char.style.color="var(--main-punctuation-colour)";
 	if (lastselected !== null && lastselected !== element) {
 		lastselected.style.display="";

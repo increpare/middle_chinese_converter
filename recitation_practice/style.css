@@ -27,6 +27,10 @@ html{
     src: url("EBGaramond-Regular.ttf");
 }
 
+@font-face {
+    font-family: cursivechinese;
+    src: url("cursive.ttf");
+}
 body {
     position: absolute;
     overflow-y: hidden;
@@ -76,7 +80,7 @@ a {
 .header:before {
     content: "︗";
     color: var(--main-punctuation-colour);
-    pointer-events: none;
+    pointer-events: none;    
 }
 
 .header:after {
@@ -145,7 +149,6 @@ a.toclink:not(:last-child):after {
     writing-mode: horizontal-tb;
 
     opacity: 0.9;
-    pointer-events: none;
     text-shadow: none;
     display:none;
     position: absolute;
@@ -155,20 +158,26 @@ a.toclink:not(:last-child):after {
     text-align: center;
     padding: 0.1em 0;
     padding-top:0em;
-    padding-bottom: 0.5em;
+    padding-bottom: 0.3em;
     border-radius: 0.5em;
     border: 0.05em solid var(--main-text-colour);
     line-height: normal;
     z-index: 1;
     top: 0px;
-    left: 100%;
-    margin-left: 5px;
+    left: 90%;
     -webkit-backdrop-filter: blur(0.06em);
     backdrop-filter: blur(0.06em);
 }
 
 
 .display_c {
+    font-size: 100%;
+    pointer-events: all;
+}
+
+.cursive {
+    padding-left: 0.2em;;
+    font-family: cursivechinese;
     font-size: 100%;
 }
 
@@ -181,8 +190,8 @@ a.toclink:not(:last-child):after {
 .defgloss {
     font-size: 40%;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    padding-left: 0.3em;
-    padding-right: 0.3em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
     min-width: 2em;
     max-width: 3em;
 }

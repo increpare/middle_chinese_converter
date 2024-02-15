@@ -140,12 +140,12 @@ console.log("onCursiveHover" + char+","+force);
 	}
 
 	
-	char.style.color="var(--main-punctuation-colour)";
 	if (lastselected !== null && lastselected !== element) {
 		lastselected.style.display="";
 		lastselected.parentElement.style.color="";
 		console.log("clearing lastselected " + lastselected);
 	}
+	char.style.color="var(--main-punctuation-colour)";
 
 	lastselected = element;
 }

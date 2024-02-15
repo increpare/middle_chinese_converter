@@ -209,18 +209,18 @@ function addDefinitions(char) {
     */
 var HTML_DEF = `<span class="char" onclick="">`;
     HTML_DEF += `${char}`;
-    HTML_DEF += `\t<span class="tooltiptext">\n`;
+    HTML_DEF += `<span class="tooltiptext">`;
     HTML_DEF += `\t\t<span class="display_c" onclick="">${char}<span class="cursive">${char}</span></span>\n`;
     var pronunciations = Object.keys(def);
 
     for (var i = 0; i < pronunciations.length; i++) {
         var pronunciation = pronunciations[i];
-        HTML_DEF += `\t\t<hr>\n`;
+        HTML_DEF += `\t\t<hr>`;
         HTML_DEF += `\t\t<span class="defpronounce">${tone_ize(pronunciation)}</span><br>\n`;
         var defs = def[pronunciation];        
         HTML_DEF += `\t\t<span class="defgloss" lang="en">${addLineBreakOpportunities(defs)}</span>\n`;
     }
-    HTML_DEF += `\t</span>\n`;
+    HTML_DEF += `</span>`;
     HTML_DEF += `</span>`;
     return HTML_DEF;
 }

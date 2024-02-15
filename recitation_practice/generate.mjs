@@ -261,7 +261,7 @@ var HTML_TOC = titles.map(title => `<a class="toclink" href="#${title}">${addDef
 
 var HTML_POEMS = poems.map(poem => generatePoemHTML(poem)).join('\n');
 
-var HTML_FILE = `<html>
+var HTML_FILE = `<html manifest="cache.manifest">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no" />

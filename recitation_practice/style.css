@@ -19,17 +19,17 @@ html{
 
 @font-face {
     font-family: noto_s;
-    src: url('NotoSerifTC-Medium.otf');
+    src: url('fonts/NotoSerifTC-Medium.otf');
 }
 
 @font-face {
     font-family: garamondregular;
-    src: url("EBGaramond-Regular.ttf");
+    src: url("fonts/EBGaramond-Regular.ttf");
 }
 
 @font-face {
     font-family: cursivechinese;
-    src: url("cursive.ttf");
+    src: url("fonts/cursive.ttf");
 }
 body {
     position: absolute;
@@ -145,6 +145,30 @@ a.toclink:not(:last-child):after {
     display: inline-block;
 }
 
+.char .cursivetooltip {
+    writing-mode: horizontal-tb;
+
+    opacity: 0.9;
+    text-shadow: none;
+    display:none;
+    position: absolute;
+    width:4em;
+    background-color: var(--main-bg-colour);
+    color: var(--main-text-colour);
+    text-align: center;
+    padding: 0.1em 0;
+    padding-top:0em;
+    padding-bottom: 0.3em;
+    border-radius: 0.5em;
+    border: 0.05em solid var(--main-text-colour);
+    line-height: normal;
+    z-index: 1;
+    top: 0px;
+    left: 90%;
+    -webkit-backdrop-filter: blur(0.06em);
+    backdrop-filter: blur(0.06em);
+}
+
 .char .tooltiptext {
     writing-mode: horizontal-tb;
 
@@ -220,3 +244,167 @@ hr:first-of-type {
     color: var(--main-punctuation-colour);
     pointer-events: none;
 }
+
+/*don't forget to preload fonts*/
+@font-face {                
+    font-family: '1';
+    src: url('fonts/1.ttf');
+}
+/* @font-face {
+    font-family: '2';
+    src: url('fonts/2.ttf');
+} */
+@font-face {
+    font-family: '3';
+    src: url('fonts/3.ttf');                
+}
+/* @font-face {
+    font-family: '4';
+    src: url('fonts/4.otf');
+} */
+/* @font-face {
+    font-family: '5';
+    src: url('fonts/5.ttf');
+} */
+@font-face {
+    font-family: '6';
+    src: url('fonts/6.ttc');
+}
+@font-face {
+    font-family: '7';
+    src: url('fonts/7.ttf');
+}
+@font-face {
+    font-family: '8';
+    src: url('fonts/8.otf');
+} 
+@font-face {
+    font-family: '9';
+    src: url('fonts/9.ttf');
+}
+@font-face {
+    font-family: '10';
+    src: url('fonts/10.ttf');
+}/*
+@font-face {
+    font-family: '11';
+    src: url('fonts/11.ttf');
+} */
+@font-face {
+    font-family: '12';
+    src: url('fonts/12.ttf');
+}
+/* @font-face {
+    font-family: '13';
+    src: url('fonts/13.ttf');
+} */
+@font-face {
+    font-family: '14';
+    src: url('fonts/14.ttf');
+}
+@font-face {
+    font-family: '15';
+    src: url('fonts/15.otf');
+}
+@font-face {
+    font-family: '16';
+    src: url('fonts/16.ttf');
+}
+@font-face {
+    font-family: '17';
+    src: url('fonts/17.ttf');
+}
+@font-face {
+    font-family: '18';
+    src: url('fonts/18.ttf');
+}
+@font-face {
+    font-family: '19';
+    src: url('fonts/19.ttf');
+}
+/* @font-face {
+    font-family: '20';
+    src: url('fonts/20.ttf');
+} */
+@font-face {
+    font-family: '21';
+    src: url('fonts/21.ttf');
+}
+@font-face {
+    font-family: '22';
+    src: url('fonts/22.ttf');
+} 
+/* @font-face {
+    font-family: '23';
+    src: url('fonts/23.ttf');
+} */
+
+.s1 {
+    font-family: '1';
+}
+.s2 {
+    font-family: '2';
+}
+.s3 {
+    font-family: '3';
+}
+.s4 {
+    font-family: '4';
+}
+.s5 {
+    font-family: '5';
+}
+.s6 {
+    font-family: '6';
+}
+.s7 {
+    font-family: '7';
+}
+.s8 {
+    font-family: '8';
+}
+.s9 {
+    font-family: '9';
+}
+.s10 {
+    font-family: '10';
+}
+.s11 {
+    font-family: '11';
+}
+.s12 {
+    font-family: '12';
+}
+/* #s13 {
+    font-family: '13';
+} */
+.s14 {
+    font-family: '14';
+}
+.s15 {
+    font-family: '15';
+}
+.s16 {
+    font-family: '16';
+}
+.s17 {
+    font-family: '17';
+}
+.s18 {
+    font-family: '18';
+}
+.s19 {
+    font-family: '19';
+}
+.s20 {
+    font-family: '20';
+}
+.s21 {
+    font-family: '21';
+}
+.s22 {
+    font-family: '22';
+}
+/* #s23 {
+    font-family: '23';
+} */

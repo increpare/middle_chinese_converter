@@ -95,9 +95,12 @@ console.log("onCursiveHover" + char+","+force);
 
 	console.log("char on "+char+ "-"+char.className);
 
+	//get location of parent 'char' element
+	var char = char.parentElement.parentElement.parentElement;
+	
 
-	var element = char.parentElement.parentElement.parentElement.getElementsByClassName("cursivetooltip")[0];
-	if (element === undefined) {
+	var element = char.getElementsByClassName("cursivetooltip")[0];
+		if (element === undefined) {
 		console.log("no definition for " + char + "of class " + char.className);
 		return;
 	}

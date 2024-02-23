@@ -71,7 +71,7 @@ for (let i = 0; i < files.length; i++) {
     //load datalite.txt
     let datalite = fs.readFileSync(file_path,'utf-8').toString();
 
-    datalite = datalite.replace(/[，？：；！]/g, '。');
+    datalite = datalite.replace(/[・，？：；！]/g, '。');
     datalite = datalite.replace(/[「 」『 』]/g, '');
 
 

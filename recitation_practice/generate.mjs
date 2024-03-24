@@ -293,9 +293,31 @@ for (let i = 0; i < files.length; i++) {
     }
 
     var titles = poems.map(poem => poem.title);
+    var opening =[];
+    /*
+    for each poem, add the first few characters (add only as many as you need to make it unique)
+    */
+    for (let i = 0; i < poems.length; i++) {
+        var firstline_i = poems[i].body[0];
+        var mindistinguishinglength = 1;
+        for (let j = 0; j < poems.length; j++) {
+            var firstline_j = poems[j].body[0];
+            for (let k=0;k<Math.min(firstline_i.length, firstline_j.length);k++) {
+                if (firstline_i[k] != firstline_j[k]) {
+                    mindistinguishinglength = Math.max(mindistinguishinglength, k+1);
+                    break;
+                }            
+            }
+        }
+        // take first mindistinguishinglength characters
+        opening.push(firstline_i.slice(0, mindistinguishinglength));
+    }
+    //zip titles and opening arrays into array of pairs
 
+
+    
     //HTML_TOC is a list of links like `<a class="toclink" href="#遠遊">遠遊</a>`
-    var HTML_TOC = titles.map(title => `<a class="toclink" href="#${title}">${addDefinitionsToLine(title)}</a>`).join('&#8203;');
+    var HTML_TOC = titles.map( (title,i) => `<a class="toclink" href="#${title}">${addDefinitionsToLine(opening[i])}</a>`).join('&#8203;');
 
 
     var HTML_POEMS = poems.map(poem => generatePoemHTML(poem)).join('\n');

@@ -1,0 +1,127 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rubyfier</title>
+    <style>
+        textarea {
+            font-size: 20pt;
+        }
+        ruby {
+            font-size: 20pt;
+        }
+        rt {
+            font-size: 15pt;
+        }
+        .def  {
+            color:gray;
+        }
+        .pron {
+            color:blue;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <textarea id="textinput"></textarea><br>
+        <button id="submi" type="button">submit</button>
+    </form>
+    <ruby id="output">
+        <!-- 漢 <rt> evil<br>asfs </rt>
+
+        漢 <rt> evil<br>asfs </rt>
+
+        漢 <rt> evil<br>asfs </rt>
+
+        漢 <rt> evil<br>asfs </rt>
+
+        漢 <rt> evil<br>asfs </rt> -->
+    </ruby>
+
+    <script>
+        //load ../data/baxter-sagart.tsv and ../data/ad_hoc_doc.tsv
+        var loaded=false;
+        var baxter_sagart = null;
+        baxter_sagart = await fetch('../data/baxter-sagart.tsv');
+        var ad_hoc_doc = await fetch('../data/ad_hoc_doc.tsv');
+
+        var baxter_lines = fs.readFileSync('../standalone/data/baxter-sagart.tsv').toString().split("\n");
+           
+        var values = [];
+        var easyvalues_lines = ad_hoc_doc.split("\n");
+        for (var i = 0; i < easyvalues_lines.length; i++) {
+            var line = easyvalues_lines[i];
+            var split = line.split("\t");
+            var char = split[0];
+            var mc = split[1];
+            var rest = split[2];
+            var oc = split[4];
+            values.push([char, "", mc, "", oc, rest]);
+        }
+
+        var baxter_lines = baxter_sagart.split("\n");
+        baxter_lines.shift();
+        for (var i = 0; i < baxter_lines.length; i++) {
+            var line = baxter_lines[i];
+            var split = line.split("\t");
+            var char = split[0];
+            var mc = split[2];
+            var def = split[5];
+            values.push([char, "", mc, "", "", def]);
+        }
+
+        var dict = {};
+        for (var i = 0; i < values.length; i++) {
+            const entry = values[i];
+            const hansi = entry[0];
+            const mc = entry[2];
+            const oc = entry[4];
+            const def = entry[5];
+            
+            if (!dict.hasOwnProperty(hansi)) {
+                dict[hansi] = {}
+                dict[hansi][mc] = def;
+            } else {
+                var dictentry = dict[hansi];
+                if (!dictentry.hasOwnProperty(mc)) {
+                    dict[hansi][mc] = def;
+                } else {
+                    //otherwise if it's entry doesn't contain def already
+                    var definition = dictentry[mc];
+                    if (definition.indexOf(def) < 0) {
+                        dict[hansi][mc]+="/"+def;
+                    }
+                }
+            }
+        }
+        
+        function onClick(e){
+            var text = document.getElementById('textinput').value;
+            var output = document.getElementById('output');
+            output.innerHTML = "";
+            var i = 0;
+            while (i < text.length) {
+                var char = text[i];
+                var ruby = document.createElement('ruby');
+                var rt = document.createElement('rt');
+                var def = "";
+                var mc = "";
+                var oc = "";
+                if (dict.hasOwnProperty(char)) {
+                    var entry = dict[char];
+                    if (entry.hasOwnProperty(mc)) {
+                        def = entry[mc];
+                    }
+                }
+                ruby.innerHTML = char;
+                rt.innerHTML = def;
+                ruby.appendChild(rt);
+                output.appendChild(ruby);
+                i++;
+            }
+        }
+
+        document.getElementById('submit').addEventListener('click', onclick);
+    </script>
+</body>
+
+</html>

@@ -1,31 +1,62 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Rubyfier</title>
     <style>
-        textarea {
-            font-size: 20pt;
+
+        body {
+            padding-bottom: 500px;
         }
+        
+        textarea {
+            font-size: 15pt;
+        }
+        
         ruby {
             font-size: 20pt;
         }
+        
         rt {
-            font-size: 15pt;
+            font-size: default;
+            /*the definition float *over* the parent word*/
+            position: absolute;
+            display: none;
+            background-color: white;
+            border: 1px solid black;
+            padding: 2px;
+            z-index: 1;
+            
+            /*font is eb garamond, a serif font*/
+            font-family: "EB Garamond", serif;
         }
-        .def  {
-            color:gray;
+        /*if you hover over a ruby character, show the rt*/
+        
+        ruby:hover>rt {
+            display: block;
         }
+        
+        .def {
+            color: gray;
+        }
+        
         .pron {
-            color:blue;
+            color: blue;
         }
+
+        
+        /*text is vertical-top to bottom, right to left        
+        https://developer.mozilla.org/en-US/docs/Web/CSS/writing-mode
+        */
     </style>
 </head>
+
 <body>
     <form>
         <textarea id="textinput"></textarea><br>
-        <button id="submi" type="button">submit</button>
+        <button id="submit" type="button">submit</button>
     </form>
-    <ruby id="output">
+    <div id="output">
         <!-- 漢 <rt> evil<br>asfs </rt>
 
         漢 <rt> evil<br>asfs </rt>
@@ -35,92 +66,211 @@
         漢 <rt> evil<br>asfs </rt>
 
         漢 <rt> evil<br>asfs </rt> -->
-    </ruby>
+        </div>
 
     <script>
         //load ../data/baxter-sagart.tsv and ../data/ad_hoc_doc.tsv
-        var loaded=false;
-        var baxter_sagart = null;
-        baxter_sagart = await fetch('../data/baxter-sagart.tsv');
-        var ad_hoc_doc = await fetch('../data/ad_hoc_doc.tsv');
+        var loaded = false;
 
-        var baxter_lines = fs.readFileSync('../standalone/data/baxter-sagart.tsv').toString().split("\n");
-           
-        var values = [];
-        var easyvalues_lines = ad_hoc_doc.split("\n");
-        for (var i = 0; i < easyvalues_lines.length; i++) {
-            var line = easyvalues_lines[i];
-            var split = line.split("\t");
-            var char = split[0];
-            var mc = split[1];
-            var rest = split[2];
-            var oc = split[4];
-            values.push([char, "", mc, "", oc, rest]);
+        const extra_vowel = "ų";
+        const vowels = "aeıou" + extra_vowel;
+        const vowels_raise = "\u0301";
+        const vowels_lower = "\u0300";
+        const vowels_hold = "\u0304";
+
+        const retroflex = "\u0323";
+        const palatize = "\u032F";
+
+
+        function tone_ize(str, forcetone) {
+            //remov opening apostrophe
+            str = str.replace(/’/g, "");
+            str = str.replace(/\+/g, extra_vowel);
+            str = str.replace(/i/g, "ı");
+            str = str.replace(/j/g, "ȷ");
+
+            var final = str[str.length - 1];
+            if (forcetone === vowels_hold) {
+                if (final === "H" || final === "X") {
+                    str = str.substr(0, str.length - 1);
+                    final = str[str.length - 1];
+                }
+            } else if (forcetone === vowels_lower) {
+                if (final === "H" || final === "X") {
+                    str = str.substr(0, str.length - 1);
+                }
+                str = str + "H";
+                final = str[str.length - 1];
+            } else if (forcetone === vowels_raise) {
+                if (final === "H" || final === "X") {
+                    str = str.substr(0, str.length - 1);
+                }
+                str = str + "X";
+                final = str[str.length - 1];
+            }
+            if (final === "X") {
+                str = str.substr(0, str.length - 1);
+                var chars = str.split("");
+                for (var i = 0; i < chars.length; i++) {
+                    var c = chars[i];
+                    var vowel_idx = vowels.indexOf(c);
+                    if (vowel_idx >= 0) {
+                        chars[i] += vowels_raise;
+                        break;
+                    }
+                }
+                str = chars.join("");
+            } else if (final === "H") {
+                str = str.substr(0, str.length - 1);
+                var chars = str.split("");
+                for (var i = 0; i < chars.length; i++) {
+                    var c = chars[i];
+                    var vowel_idx = vowels.indexOf(c);
+                    if (vowel_idx >= 0) {
+                        chars[i] += vowels_lower;
+                        break;
+                    }
+                }
+                str = chars.join("").normalize('NFC');;
+            } else if (final !== "p" && final !== "t" & final !== "k") {
+                var chars = str.split("");
+                for (var i = 0; i < chars.length; i++) {
+                    var c = chars[i];
+                    var vowel_idx = vowels.indexOf(c);
+                    if (vowel_idx >= 0) {
+                        chars[i] += vowels_hold;
+                        break;
+                    }
+                }
+                str = chars.join("");
+            }
+
+            chars = str.split("");
+            //replace r with retroflex dot
+            for (var i = 0; i < chars.length - 1; i++) {
+                if (vowels.indexOf(chars[i]) >= 0) {
+                    break;
+                }
+                if (chars[i] === 'r') {
+                    chars[i] = retroflex;
+                }
+                if (i > 0 && chars[i] === 'y') {
+                    chars[i] = palatize;
+                }
+            }
+            str = chars.join('');
+            return str;
         }
 
-        var baxter_lines = baxter_sagart.split("\n");
-        baxter_lines.shift();
-        for (var i = 0; i < baxter_lines.length; i++) {
-            var line = baxter_lines[i];
-            var split = line.split("\t");
-            var char = split[0];
-            var mc = split[2];
-            var def = split[5];
-            values.push([char, "", mc, "", "", def]);
-        }
 
         var dict = {};
-        for (var i = 0; i < values.length; i++) {
-            const entry = values[i];
-            const hansi = entry[0];
-            const mc = entry[2];
-            const oc = entry[4];
-            const def = entry[5];
-            
-            if (!dict.hasOwnProperty(hansi)) {
-                dict[hansi] = {}
-                dict[hansi][mc] = def;
-            } else {
-                var dictentry = dict[hansi];
-                if (!dictentry.hasOwnProperty(mc)) {
+        async function start() {
+            var baxter_sagart_file = await fetch('../data/baxter-sagart.tsv');
+            var baxter_sagart = await baxter_sagart_file.text();
+
+            var ad_hoc_doc_file = await fetch('../data/ad_hoc_doc.tsv');
+            var ad_hoc_doc = await ad_hoc_doc_file.text();
+
+            var baxter_lines = baxter_sagart.split("\n");
+
+            var values = [];
+            var easyvalues_lines = ad_hoc_doc.toString().split("\n");
+            for (var i = 0; i < easyvalues_lines.length; i++) {
+                var line = easyvalues_lines[i];
+                var split = line.split("\t");
+                var char = split[0];
+                var mc = split[1];
+                var rest = split[2];
+                var oc = split[4];
+                values.push([char, "", mc, "", oc, rest]);
+            }
+
+            var baxter_lines = baxter_sagart.split("\n");
+            baxter_lines.shift();
+            for (var i = 0; i < baxter_lines.length; i++) {
+                var line = baxter_lines[i];
+                var split = line.split("\t");
+                var char = split[0];
+                var mc = split[2];
+                var def = split[5];
+                values.push([char, "", mc, "", "", def]);
+            }
+
+            for (var i = 0; i < values.length; i++) {
+                const entry = values[i];
+                const hansi = entry[0];
+                const mc = entry[2];
+                const oc = entry[4];
+                const def = entry[5];
+
+                if (!dict.hasOwnProperty(hansi)) {
+                    dict[hansi] = {}
                     dict[hansi][mc] = def;
                 } else {
-                    //otherwise if it's entry doesn't contain def already
-                    var definition = dictentry[mc];
-                    if (definition.indexOf(def) < 0) {
-                        dict[hansi][mc]+="/"+def;
+                    var dictentry = dict[hansi];
+                    if (!dictentry.hasOwnProperty(mc)) {
+                        dict[hansi][mc] = def;
+                    } else {
+                        //otherwise if it's entry doesn't contain def already
+                        var definition = dictentry[mc];
+                        if (definition.indexOf(def) < 0) {
+                            dict[hansi][mc] += "/" + def;
+                        }
                     }
                 }
             }
+            loaded = true;
         }
-        
-        function onClick(e){
+
+        start();
+
+        function onClick(e) {
+            if (loaded === false) {
+                return;
+            }
             var text = document.getElementById('textinput').value;
             var output = document.getElementById('output');
             output.innerHTML = "";
             var i = 0;
             while (i < text.length) {
                 var char = text[i];
+                //if newline, add br
+                if (char === "\n") {
+                    output.appendChild(document.createElement('br'));
+                    i++;
+                    continue;
+                }
+                //if charcter latin alphanumeric, skip
+                if (char.match(/[a-z0-9]/i)) {
+                    i++;
+                    continue;
+                }
                 var ruby = document.createElement('ruby');
                 var rt = document.createElement('rt');
-                var def = "";
-                var mc = "";
-                var oc = "";
+
+                var deftext = "";
                 if (dict.hasOwnProperty(char)) {
                     var entry = dict[char];
-                    if (entry.hasOwnProperty(mc)) {
-                        def = entry[mc];
+                    //format is <promnunciation>:<definition>
+                    var pronunciations = Object.keys(entry);
+                    for (var j = 0; j < pronunciations.length; j++) {
+                        var pronunciation = pronunciations[j];
+                        var definition = entry[pronunciation];
+                        if (deftext.length > 0) {
+                            deftext += "<br>";
+                        }
+                        deftext += "<span class='pron'>" +tone_ize(pronunciation) + "</span><br><span class='def'>" + definition + "</span>";
                     }
                 }
                 ruby.innerHTML = char;
-                rt.innerHTML = def;
+                rt.innerHTML = deftext;
                 ruby.appendChild(rt);
                 output.appendChild(ruby);
                 i++;
             }
         }
 
-        document.getElementById('submit').addEventListener('click', onclick);
+        document.getElementById('submit').addEventListener('click', onClick);
     </script>
 </body>
 

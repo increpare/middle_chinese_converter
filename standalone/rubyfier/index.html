@@ -81,6 +81,7 @@
         const retroflex = "\u0323";
         const palatize = "\u032F";
 
+        const chinese_punctuation = "，。、；：？！「」『』〈〉《》〔〕【】〖〗〘〙〚〛〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏﹑﹔﹖﹪﹫";
 
         function tone_ize(str, forcetone) {
             //remov opening apostrophe
@@ -230,6 +231,9 @@
             }
             var text = document.getElementById('textinput').value;
             var output = document.getElementById('output');
+            
+            var not_found = "";
+
             output.innerHTML = "";
             var i = 0;
             while (i < text.length) {
@@ -261,12 +265,20 @@
                         }
                         deftext += "<span class='pron'>" +tone_ize(pronunciation) + "</span><br><span class='def'>" + definition + "</span>";
                     }
+                } else {
+                    not_found += char;
                 }
                 ruby.innerHTML = char;
                 rt.innerHTML = deftext;
-                ruby.appendChild(rt);
+                if (chinese_punctuation.indexOf(char) < 0){
+                    ruby.appendChild(rt);
+                }
                 output.appendChild(ruby);
                 i++;
+            }
+
+            if (not_found.length > 0) {
+                window.console.log("The following characters were not found in the dictionary: " + not_found);
             }
         }
 

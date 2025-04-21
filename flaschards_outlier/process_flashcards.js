@@ -13,6 +13,18 @@ hanzi.start();
 
 
 
+var variant_sets = ["𱐕㐺","󰂤㝱","𣑼𣏟","亏于","犾㹜","𢊁廌","帇𦘒","𣠔㯻","𠙴凵","𤣩玉","丄𠄞上","气乞","𠰛吿告","𠙵口","𣥚𧺆走","𣥠癶","昰是","𠕋𠕁冊册","𧮫𠔌","𠯶句","𠃚𠃏丩","𠦃卅","𠬞廾廾","𡴂𠬜","𠔏共","𦥠舁舁","𦥑臼","𠦶革","䰜𩰲","𠃨丮𩰊","㕜史","𦘙畫","殺𣪩?","𡰻皮","𠭼㼱","⺊卜","𤰃用","𥄎𡕥","睂眉","𦣹自","鼻鼻","𦏲羽","雈萑","𦤄𥄕","𦍋羊","𣦻𣦼","𣦵歺","𣦸死","𠕎肉","𠚣刀","㓞𠛉","𣐇耒","𧢲角","𤮺甘","𠄎乃","𠤔旨","𧯛壴","𧯽豊","㚎厺去","𠂁丹","𤯞靑青","丼井","𠊊食","𠓛亼","𠓡矢","𩫖𩫏","𢂋京","𣆪𣆉㫗","𠾂𠻮嗇","䑞舜","𡳿㞢之","𤯓生","𦾓華","𥠻稽","巢巢","𣠔㯻","𨛜䣈𨙵","朙明","𡖈𡖇多","𠄷𠫼亝齊","㐔𠅏克","𢑗彔录","𪏽香","𣎳朩","麻麻","𥤢穴","𤕫𤕬疒","𠘨冖","襾覀","黹黹","󰈙𠤎","丠丘","𡔛𡈼","𡍴𨤣重","𠂣㐆","𧚍裘","𡰣尸","𡳐履","𨡳㱃","㒫旡","𩑋頁","𡇢𠚑面","𩠐首","𠨗巵卮","𢎛卪卩㔾","𠁽丸","㣇㣇","𢄉豚","𧰽𤉡","𤉢象","𪐗黑","囪囱","𤆍赤","𡗕亦","𡯁尢𡯂尣","𡔲壺","𡕍壹","㚔𠂷𡴘幸","夲𠦍","𡗓立","𡘋竝","恖思","𩕘頻瀕","巛川","仌冫","𤋳魚","𩙱飛","𠃉乚","𠀚不","𡉰至","㢴西","𦣝𦣞","𤦡珡琴","𠃑𠃊","兦亾亡","𠙹甾","𢎺弦","𢁴系","𦃃素","𪓑黽","𡏳堇","黃黄","𠠲力","勺勺","𤣫𣁬斗","𠀁七","𠘯禸厹","𠾧嘼","𢀳巴","𠩖庚","𡩟寅","戼卯","𨑃辰","𦥔申"]
+function get_variant_set(char){
+    for (var i = 0; i < variant_sets.length; i++) {
+        var variant_set = variant_sets[i];
+        var variant_set_chars = [...variant_set];
+        if (variant_set_chars.indexOf(char) >= 0) {
+            return [...variant_set];
+        }
+    }
+    return [char];
+}
+
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -44,7 +56,10 @@ for (var i = 0; i < easyvalues_lines.length; i++) {
     var oc = split[4];
     var pinyin_lookup = char;
     //if rest ends with "(x)"", use x as pinyin_lookup
+
+    //don't use rest.split("");
     var rest_chars = [...rest];
+    
     if (rest_chars.length>2 && rest_chars[rest_chars.length-1]===")" && rest_chars[rest_chars.length-3]==="("){
         pinyin_lookup = rest_chars[rest_chars.length-2];
     }
@@ -105,7 +120,7 @@ await writeFile(resolve(__dirname, './values.json'), JSON.stringify(values, null
 function fetch_definition_str(char){
     var lookup = hanzi.definitionLookup(char)
     if (!lookup){
-        console.log("no lookup found for character", char);
+        // console.log("no lookup found for character", char);
         return "";
     }
     // console.log(lookup,char);
@@ -119,8 +134,16 @@ function fetch_definition_str(char){
     }
     return lookup[0].definition;
 }
+
+function try_get_pinyin(character){
+    var pinyin_results = pinyin.pinyin(character);
+    if (pinyin_results==null||pinyin_results.length ===0 || pinyin_results[0].length ===0){
+        return "";
+    }
+    return pinyin_results[0][0];
+}
 function fetch_pronunciation_entry_dynamically(character, fallback) {
-    //look it up in qieyun
+    //look it up in qieyun    
     var lookup = 資料.query字頭(character);
     if (lookup.length === 0) {
         var pinyin_results = pinyin.pinyin(character);
@@ -129,14 +152,19 @@ function fetch_pronunciation_entry_dynamically(character, fallback) {
             return "#";
         }
         var py = (pinyin.pinyin(character))[0][0];
-        console.log("Warning: character", character, "not found in qieyun, using pinyin:", py);
+        // console.log("Warning: character", character, "not found in qieyun, using pinyin:", py);
         return py;
     } else {
         for (var i = 0; i < lookup.length; i++) {
             const 音韻地位 = lookup[i].音韻地位;
             var 解釋 = lookup[i].解釋;
             const mc = baxter(音韻地位);
-            const py = putonghua(音韻地位);
+            // const py_reconstructed = putonghua(音韻地位);
+            var py = try_get_pinyin(character);
+            // if (py.normalize("NFC")!==py_reconstructed.normalize("NFC")){
+                // console.log("Warning: character", character, "has different pinyin in qieyun and pinyin library:", py, py_reconstructed);
+            // }
+
             var pronunciation = `${py} (${mc})`;
 
             var alt_definition = fetch_definition_str(character);
@@ -186,34 +214,26 @@ function strip_str(str) {
 }
 
 
+var shuowen_dict = JSON.parse(await readFile(resolve(__dirname, './shouwendict.json'), 'utf8'));
+
 function strip_parentheticals(str) {
     var original_str = str;
     str=str.trim();
-    console.log("trimmed", str);
     var str_chars = [...str];
-    console.log(str_chars);
-    console.log(str_chars.length);
-    console.log(str_chars[str_chars.length-1]);
-    console.log(str_chars[str_chars.length-3]);
     if (str_chars.length>2 && str_chars[str_chars.length-3]==="(" && str_chars[str_chars.length-1]===")"){
         var char_to_add = str_chars[str_chars.length-2];
-        console.log("char_to_add", char_to_add);
         if (is_cjk(char_to_add)){
-            console.log(str_chars);
-            console.log(char_to_add);
+            // console.log(str_chars);
+            // console.log(char_to_add);
             str = char_to_add;
-            console.log("post 0", str);
         }
     }
 
     //remove all parentheticals
     //if I end with 
     str = str.replace(/\([^)]*\)/g, '');
-    console.log("post 1", str);
     str = str.replace(/\（[^)]*\）/g, '');
-    console.log("post 2", str);
     str = str.replace(/\《[^)]*\》/g, '');
-    console.log("post 3", str);
     var str_toks = str.split("。");
     if (str_toks.length > 1) {
         var char_to_add = [...(str_toks[1].trim())][0]; 
@@ -224,11 +244,8 @@ function strip_parentheticals(str) {
     //trim whitespace
     str = str.trim();
     var str_chars = [...original_str];
-    console.log(str_chars);
-    console.log([...str][0]);
     //if the original string ended with a parenthetical, add is contents back, if the string here is empty
 
-    console.log("post 4", str);
     return str;
 }
 
@@ -251,26 +268,33 @@ for (var i = 0; i < flashcards.length; i++) {
     */
     //so I want to replace the 拼音 field with the middle-chinese pronunciation from the dictionary
     //first, look up character
-    if (fields[0].indexOf("𦫳")>=0){
-        console.log("found in checkpoint 1", fields);
-        console.log("fields[0]"+fields[0]);
-    
-        var hz = strip_parentheticals(fields[0]);
-        console.log("post strip_str", hz);
-        hz = strip_str(hz);
-        console.log("post strip_str", hz);
-    } else {
-        var hz = strip_str(strip_parentheticals(fields[0]));
 
+    var hz = strip_str(strip_parentheticals(fields[0]));
+
+    if (fields[6].trim().length===0){
+        var variants = get_variant_set(hz);
+        var found_definition = false;
+        for (var j = 0; j < variants.length; j++) {
+            var variant = variants[j];
+            if (shuowen_dict.hasOwnProperty(variant)){
+                fields[6] = shuowen_dict[variant];
+                found_definition = true;
+                break;
+            }
+        }
+        if (!found_definition){
+            //only log if fields[0][0] is a digit
+            if (fields[0][0].match(/\d/)){
+                console.log("ERROR: no definition found for character", hz);
+                console.log("variant sets:", variants);
+            }
+        }
     }
     if (hz.length === 0) {
         //just take last character
         hz = strip_str(fields[1]);
     }
-    if (hz.indexOf("𦫳")>=0){
-        console.log("found in checkpoint 2", fields);
-        console.log("hz = "+hz);
-    }
+
     if (hz.length === 0) {
         console.log(`Warning: character "${fields[0]}" is empty`);
         continue;
@@ -281,11 +305,6 @@ for (var i = 0; i < flashcards.length; i++) {
         console.log(`Warning: character "${fields[0]}" has more than one character (stripped: "${hanzi}")`);
         // Try to use just the first character
         hz = hz_chars[0];
-    }
-
-    if (hz==="𦫳"){
-        console.log("found in checkpoint 3", fields);
-        console.log(hz);
     }
 
     let lookup_dict=dict;
@@ -335,8 +354,3 @@ const deck2_json = JSON.stringify(flashcards_json, null, 2);
 await writeFile("./說文部首：楷體與小篆/deck.json", deck2_json);
 console.log("Updated deck saved to ./說文部首：楷體與小篆/deck.json");
 
-
-/* why can't i see 
-󰈙
-    𥄎𠂢𠂆𦫳𣦻𢆶㓞𠙴丶𨛜㫃𣐺𠧪𠔼㒳󰈙𱐕𱐕𠂣
-*/

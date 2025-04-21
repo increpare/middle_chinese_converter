@@ -11,6 +11,9 @@ var files = fs.readdirSync('shuowen/');
 for (var i = 0; i < files.length; i++) {
     var file = files[i];
     var data = JSON.parse(fs.readFileSync('shuowen/'+file, 'utf8'));
+    if (dict.hasOwnProperty(data.wordhead)) {
+        console.log("already exists: "+data.wordhead);
+    }
     dict[data.wordhead] = data.explanation;
 }
 
